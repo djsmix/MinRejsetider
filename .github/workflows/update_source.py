@@ -86,10 +86,13 @@ def build() -> tuple[dict, dict]:
     esign_json = {
         "name": "MinRejsetider",
         "identifier": "dk.minrejsetider.source",
+        "sourceURL": PAGES + "/esign.json",
         "apps": [
-            {"name": a["name"], "bundleID": BUNDLE, "version": a["version"],
-             "icon": ICON, "down": a["downloadURL"], "size": a["size"],
-             "description": a["localizedDescription"][:200]}
+            {"name": a["name"], "bundleIdentifier": BUNDLE, "version": a["version"],
+             "versionDate": a["versionDate"][:10], "size": a["size"],
+             "downloadURL": a["downloadURL"], "developerName": "privat",
+             "localizedDescription": a["localizedDescription"][:300],
+             "iconURL": ICON}
             for a in apps
         ],
     }
