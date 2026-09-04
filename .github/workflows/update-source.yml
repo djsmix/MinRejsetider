@@ -1,8 +1,14 @@
 name: Update eSign repo JSON
 
 on:
-  release:
-    types: [published]
+  # NB: 'release: published' duer ikke — releases oprettes med GITHUB_TOKEN,
+  # og den slags events starter ikke nye runs. Derfor kører vi når builds er færdige.
+  workflow_run:
+    workflows:
+      - "Build free-signing IPA (app+widget, no App Groups)"
+      - "Build eSign IPA (app-only, no widget/groups)"
+      - "Build unsigned IPA (no Mac needed)"
+    types: [completed]
   workflow_dispatch:
 
 jobs:

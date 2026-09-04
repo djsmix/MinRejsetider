@@ -40,8 +40,10 @@ def asset(tag: str) -> dict:
 
 
 def build() -> tuple[dict, dict]:
-    fw = asset(latest_tag("freewidget"))
-    es = asset(latest_tag("esign"))
+    fw_tag, es_tag = latest_tag("freewidget"), latest_tag("esign")
+    if not fw_tag or not es_tag:
+        raise SystemExit(f"Mangler tags (freewidget={fw_tag}, esign={es_tag}) — springer over.")
+    fw, es = asset(fw_tag), asset(es_tag)
 
     def app_block(kind: str, a: dict, name: str, subtitle: str, desc: str, vdesc: str) -> dict:
         return {
