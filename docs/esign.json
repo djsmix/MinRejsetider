@@ -1,1 +1,42 @@
-{"apps": [{"beta": false, "bundleIdentifier": "dk.minrejsetider.MinRejsetider", "developerName": "privat", "downloadURL": "https://github.com/djsmix/MinRejsetider/releases/download/freewidget-8/MinRejsetider-freewidget-unsigned.ipa", "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png", "localizedDescription": "Personlig metro-afgangstavle med konfigurerbar widget (station, retning og tidsrum vælges direkte på widgetten). Usigneret — signer selv i eSign. Husk at sætte Access ID i appen og på widgetten.", "name": "MinRejsetider + widget", "screenshotURLs": [], "size": 227126, "subtitle": "App + konfigurerbar widget til gratis certs", "tintColor": "DC262E", "version": "1.0-freewidget-8", "versionDate": "2026-09-04T11:25:58Z", "versionDescription": "Konfigurerbar widget, live-nedtælling, retningsvælger."}, {"beta": false, "bundleIdentifier": "dk.minrejsetider.MinRejsetider", "developerName": "privat", "downloadURL": "https://github.com/djsmix/MinRejsetider/releases/download/esign-9/MinRejsetider-eSign-unsigned.ipa", "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png", "localizedDescription": "Kun selve appen, uden widget. Vælg denne hvis widget-varianten ikke vil installere. Usigneret — signer selv i eSign.", "name": "MinRejsetider basis", "screenshotURLs": [], "size": 198277, "subtitle": "Kun appen, uden widget", "tintColor": "DC262E", "version": "1.0-esign-9", "versionDate": "2026-09-04T11:25:57Z", "versionDescription": "Samme app, uden widget-extension."}], "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png", "identifier": "dk.minrejsetider.source", "name": "MinRejsetider", "news": [], "sourceURL": "https://djsmix.github.io/MinRejsetider/esign.json", "subtitle": "Privat metro-afgangstavle"}
+{
+  "name": "MinRejsetider",
+  "identifier": "dk.minrejsetider.source",
+  "sourceURL": "https://djsmix.github.io/MinRejsetider/esign.json",
+  "subtitle": "Privat metro-afgangstavle",
+  "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png",
+  "apps": [
+    {
+      "name": "MinRejsetider + widget",
+      "bundleIdentifier": "dk.minrejsetider.MinRejsetider",
+      "developerName": "privat",
+      "subtitle": "App + konfigurerbar widget til gratis certs",
+      "version": "1.0-freewidget-9",
+      "versionDate": "2026-09-04T12:02:16Z",
+      "versionDescription": "App + widget uden App Groups. Konfigurerbar widget, live-nedtælling, retningsvælger.",
+      "downloadURL": "https://github.com/djsmix/MinRejsetider/releases/download/freewidget-9/MinRejsetider-freewidget-unsigned.ipa",
+      "localizedDescription": "Personlig metro-afgangstavle med konfigurerbar widget (vælg station, retning og tidsrum direkte på widgetten). Henter kun i dine tidsvinduer og holder sig langt under 50.000 API-kald/md. Usigneret — signér selv i eSign/Sideloadly. OBS: app og widget deler ikke indstillinger (ingen App Groups på gratis certs).",
+      "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png",
+      "tintColor": "DC262E",
+      "size": 227141,
+      "screenshotURLs": [],
+      "beta": false
+    },
+    {
+      "name": "MinRejsetider basis",
+      "bundleIdentifier": "dk.minrejsetider.MinRejsetider",
+      "developerName": "privat",
+      "subtitle": "Kun appen, uden widget",
+      "version": "1.0-esign-10",
+      "versionDate": "2026-09-04T12:02:15Z",
+      "versionDescription": "Samme app som +widget-varianten, men uden widget-extension.",
+      "downloadURL": "https://github.com/djsmix/MinRejsetider/releases/download/esign-10/MinRejsetider-eSign-unsigned.ipa",
+      "localizedDescription": "Kun selve appen, uden widget. Mindste flade der kan drille ved signering — vælg denne hvis +widget-varianten ikke vil installere. Usigneret — signér selv i eSign/Sideloadly.",
+      "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png",
+      "tintColor": "DC262E",
+      "size": 198277,
+      "screenshotURLs": [],
+      "beta": false
+    }
+  ],
+  "news": []
+}
