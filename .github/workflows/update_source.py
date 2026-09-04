@@ -59,6 +59,8 @@ def build() -> tuple[dict, dict]:
             "iconURL": ICON,
             "tintColor": "DC262E",
             "size": a["file"]["size"],
+            "screenshotURLs": [],
+            "beta": False,
         }
 
     apps = [
@@ -87,14 +89,19 @@ def build() -> tuple[dict, dict]:
         "name": "MinRejsetider",
         "identifier": "dk.minrejsetider.source",
         "sourceURL": PAGES + "/esign.json",
+        "subtitle": "Privat metro-afgangstavle",
+        "iconURL": ICON,
         "apps": [
-            {"name": a["name"], "bundleIdentifier": BUNDLE, "version": a["version"],
-             "versionDate": a["versionDate"][:10], "size": a["size"],
-             "downloadURL": a["downloadURL"], "developerName": "privat",
-             "localizedDescription": a["localizedDescription"][:300],
-             "iconURL": ICON}
+            {"name": a["name"], "bundleIdentifier": BUNDLE, "developerName": "privat",
+             "subtitle": a["subtitle"], "version": a["version"],
+             "versionDate": a["versionDate"], "versionDescription": a["versionDescription"],
+             "downloadURL": a["downloadURL"],
+             "localizedDescription": a["localizedDescription"],
+             "iconURL": ICON, "tintColor": "DC262E", "size": a["size"],
+             "screenshotURLs": [], "beta": False}
             for a in apps
         ],
+        "news": [],
     }
     return apps_json, esign_json
 
