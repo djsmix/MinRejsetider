@@ -1,1 +1,24 @@
-{"apps": [{"bundleID": "dk.minrejsetider.MinRejsetider", "description": "Personlig metro-afgangstavle med konfigurerbar widget (station, retning, tidsrum vælges på widgetten). Kun signér-selv. App og widget deler ikke indstillinger.", "down": "https://github.com/djsmix/MinRejsetider/releases/download/freewidget-1/MinRejsetider-freewidget-unsigned.ipa", "icon": "https://djsmix.github.io/MinRejsetider/icon.png", "name": "MinRejsetider + widget", "size": 201397, "version": "1.0-freewidget-1"}, {"bundleID": "dk.minrejsetider.MinRejsetider", "description": "Kun appen uden widget. Vælg denne hvis widget-varianten ikke vil installere.", "down": "https://github.com/djsmix/MinRejsetider/releases/download/esign-7/MinRejsetider-eSign-unsigned.ipa", "icon": "https://djsmix.github.io/MinRejsetider/icon.png", "name": "MinRejsetider basis", "size": 197033, "version": "1.0-esign-7"}], "identifier": "dk.minrejsetider.source", "name": "MinRejsetider"}
+{
+  "name": "MinRejsetider",
+  "identifier": "dk.minrejsetider.source",
+  "apps": [
+    {
+      "name": "MinRejsetider + widget",
+      "bundleID": "dk.minrejsetider.MinRejsetider",
+      "version": "1.0-freewidget-8",
+      "icon": "https://djsmix.github.io/MinRejsetider/icon.png",
+      "down": "https://github.com/djsmix/MinRejsetider/releases/download/freewidget-8/MinRejsetider-freewidget-unsigned.ipa",
+      "size": 227126,
+      "description": "Personlig metro-afgangstavle med konfigurerbar widget (vælg station, retning og tidsrum direkte på widgetten). Henter kun i dine tidsvinduer og holder sig langt under 50.000 API-kald/md. Usigneret — s"
+    },
+    {
+      "name": "MinRejsetider basis",
+      "bundleID": "dk.minrejsetider.MinRejsetider",
+      "version": "1.0-esign-9",
+      "icon": "https://djsmix.github.io/MinRejsetider/icon.png",
+      "down": "https://github.com/djsmix/MinRejsetider/releases/download/esign-9/MinRejsetider-eSign-unsigned.ipa",
+      "size": 198277,
+      "description": "Kun selve appen, uden widget. Mindste flade der kan drille ved signering — vælg denne hvis +widget-varianten ikke vil installere. Usigneret — signér selv i eSign/Sideloadly."
+    }
+  ]
+}
