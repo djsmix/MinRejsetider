@@ -36,6 +36,22 @@
       "size": 198277,
       "screenshotURLs": [],
       "beta": false
+    },
+    {
+      "name": "MinRejsetider widget-TEST",
+      "bundleIdentifier": "dk.minrejsetider.MinRejsetider",
+      "developerName": "privat",
+      "subtitle": "KUN test — statisk widget uden intents",
+      "version": "1.0-widgettest-1",
+      "versionDate": "2026-09-04T12:10:42Z",
+      "versionDescription": "Statisk widget uden App Intents.",
+      "downloadURL": "https://github.com/djsmix/MinRejsetider/releases/download/widgettest-1/MinRejsetider-widgettest-unsigned.ipa",
+      "localizedDescription": "TEST-build til at isolere eSign-installationsfejl. Viser blot 'Test'. IKKE til daglig brug.",
+      "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png",
+      "tintColor": "DC262E",
+      "size": 202644,
+      "screenshotURLs": [],
+      "beta": false
     }
   ],
   "news": []
