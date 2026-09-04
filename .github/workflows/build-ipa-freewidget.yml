@@ -52,10 +52,14 @@ jobs:
       - name: Validate bundle
         run: |
           APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
-          echo "=== arch ==="; lipo -info "$APP/MinRejsetider"
-          echo "=== appex ==="; ls "$APP/PlugIns" 2>/dev/null || echo "INGEN PlugIns!"
+          APPEX="$APP/PlugIns/RejsetiderWidgetExtension.appex"
+          echo "=== arch ==="; lipo -info "$APP/MinRejsetider"; lipo -info "$APPEX/RejsetiderWidgetExtension"
+          echo "=== appex files ==="; find "$APPEX" -type f -o -type l | head; find "$APPEX" -name "_CodeSignature" -maxdepth 2
           echo "=== app id ==="; plutil -extract CFBundleIdentifier raw "$APP/Info.plist"
-          echo "=== appex id ==="; plutil -extract CFBundleIdentifier raw "$APP/PlugIns/RejsetiderWidgetExtension.appex/Info.plist"
+          echo "=== appex id ==="; plutil -extract CFBundleIdentifier raw "$APPEX/Info.plist"
+          echo "=== appex plist FULL ==="; plutil -p "$APPEX/Info.plist"
+          echo "=== appex minOS ==="; plutil -extract MinimumOSVersion raw "$APPEX/Info.plist"; plutil -extract LSMinimumSystemVersion raw "$APPEX/Info.plist" || true
+          echo "=== appex exec bit ==="; ls -l "$APPEX/RejsetiderWidgetExtension"
           echo "=== bundle ==="; find "$APP" -type f | head -20
 
       - name: Package unsigned IPA
