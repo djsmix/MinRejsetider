@@ -54,6 +54,8 @@ jobs:
           APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
           echo "=== arch ==="; lipo -info "$APP/MinRejsetider"
           echo "=== appex ==="; ls "$APP/PlugIns" 2>/dev/null || echo "INGEN PlugIns!"
+          echo "=== app id ==="; plutil -extract CFBundleIdentifier raw "$APP/Info.plist"
+          echo "=== appex id ==="; plutil -extract CFBundleIdentifier raw "$APP/PlugIns/RejsetiderWidgetExtension.appex/Info.plist"
           echo "=== bundle ==="; find "$APP" -type f | head -20
 
       - name: Package unsigned IPA

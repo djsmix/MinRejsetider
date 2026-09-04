@@ -16,7 +16,6 @@ targets:
     sources:
       - path: App
       - path: Shared
-    bundleId: dk.minrejsetider.app
     info:
       path: App/Info.plist
       properties:
@@ -26,6 +25,7 @@ targets:
     entitlements:
       path: App/MinRejsetider.entitlements
     settings:
+      PRODUCT_BUNDLE_IDENTIFIER: dk.minrejsetider.MinRejsetider
       INFOPLIST_KEY_CFBundleDisplayName: MinRejsetider
       INFOPLIST_KEY_LSRequiresIPhoneOS: YES
       INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
@@ -40,12 +40,10 @@ targets:
     sources:
       - path: Widget
       - path: Shared
-    bundleId: dk.minrejsetider.app.RejsetiderWidget
     info:
       path: Widget/WidgetInfo.plist
-    entitlements:
-      path: Widget/Widget.entitlements
     settings:
+      PRODUCT_BUNDLE_IDENTIFIER: dk.minrejsetider.MinRejsetider.widget
       INFOPLIST_KEY_CFBundleDisplayName: RejsetiderWidget
       CODE_SIGN_STYLE: Automatic
 
