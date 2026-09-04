@@ -1,0 +1,80 @@
+name: Build eSign IPA (app-only, no widget/groups)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "App/**"
+      - "Shared/**"
+      - "project.yml"
+      - ".github/workflows/build-ipa-esign.yml"
+      - ".github/workflows/strip_for_esign.py"
+
+jobs:
+  build:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer || sudo xcode-select -p
+
+      - name: Install xcodegen + pyyaml
+        run: |
+          brew install xcodegen || true
+          python3 -m pip install --break-system-packages pyyaml || pip3 install --break-system-packages pyyaml || python3 -m pip install pyyaml
+
+      - name: Strip to app-only (no appex, no App Groups)
+        run: python3 .github/workflows/strip_for_esign.py
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build .app (unsigned, for eSign)
+        run: |
+          xcodebuild \
+            -project MinRejsetider.xcodeproj \
+            -scheme MinRejsetider \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Validate IPA structure
+        run: |
+          APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
+          echo "=== arch ==="; lipo -info "$APP/MinRejsetider"
+          echo "=== Info.plist ==="; plutil -p "$APP/Info.plist"
+          echo "=== bundle contents ==="; find "$APP" -type f | head -20; du -sh "$APP"
+
+      - name: Package unsigned IPA
+        run: |
+          APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
+          echo "Found $APP"
+          rm -rf Payload MinRejsetider-eSign-unsigned.ipa
+          mkdir Payload
+          cp -R "$APP" Payload/
+          zip -r MinRejsetider-eSign-unsigned.ipa Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinRejsetider-eSign-unsigned
+          path: MinRejsetider-eSign-unsigned.ipa
+
+      - name: Publish GitHub Release (direkte .ipa, ingen zip)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: esign-${{ github.run_number }}
+          name: eSign IPA (build ${{ github.run_number }})
+          body: |
+            App-only variant uden widget og App Groups — klar til eSign.
+            Hent .ipa'en direkte herunder (ingen udpakning nødvendig).
+            Commit: ${{ github.sha }}
+          files: MinRejsetider-eSign-unsigned.ipa
+          prerelease: true

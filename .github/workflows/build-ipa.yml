@@ -1,0 +1,68 @@
+name: Build unsigned IPA (no Mac needed)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "App/**"
+      - "Shared/**"
+      - "Widget/**"
+      - "project.yml"
+      - ".github/workflows/build-ipa.yml"
+
+jobs:
+  build:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer || sudo xcode-select -p
+
+      - name: Install xcodegen
+        run: brew install xcodegen || true
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build .app (unsigned, for sideload re-sign)
+        run: |
+          xcodebuild \
+            -project MinRejsetider.xcodeproj \
+            -scheme MinRejsetider \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
+          echo "Found $APP"
+          rm -rf Payload MinRejsetider-unsigned.ipa
+          mkdir Payload
+          cp -R "$APP" Payload/
+          zip -r MinRejsetider-unsigned.ipa Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinRejsetider-unsigned
+          path: MinRejsetider-unsigned.ipa
+
+      - name: Publish GitHub Release (direkte .ipa, ingen zip)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: full-${{ github.run_number }}
+          name: Fuld IPA med widget (build ${{ github.run_number }})
+          body: |
+            Fuld variant med widget + App Groups — til Sideloadly/AltStore.
+            Hent .ipa'en direkte herunder (ingen udpakning nødvendig).
+            Commit: ${{ github.sha }}
+          files: MinRejsetider-unsigned.ipa
+          prerelease: true
