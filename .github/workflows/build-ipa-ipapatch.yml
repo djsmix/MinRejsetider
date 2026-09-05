@@ -1,0 +1,94 @@
+name: Build ipapatch widget IPA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "App/**"
+      - "Shared/**"
+      - "Widget/**"
+      - "project.yml"
+      - ".github/workflows/build-ipa-ipapatch.yml"
+
+jobs:
+  build:
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer || sudo xcode-select -p
+
+      - name: Install xcodegen
+        run: brew install xcodegen || true
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build unsigned app and widget
+        run: |
+          xcodebuild \
+            -project MinRejsetider.xcodeproj \
+            -scheme MinRejsetider \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package original IPA
+        run: |
+          APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
+          mkdir Payload
+          cp -R "$APP" Payload/
+          zip -qry MinRejsetider-before-ipapatch.ipa Payload
+
+      - name: Build pinned ipapatch v2.1.3
+        run: |
+          git clone --depth 1 --branch v2.1.3 https://github.com/asdfzxcvbn/ipapatch.git "$RUNNER_TEMP/ipapatch-src"
+          test "$(git -C "$RUNNER_TEMP/ipapatch-src" rev-parse HEAD)" = "2ccafe4035bcf9fdade17cf32605d532da6cea6a"
+          cd "$RUNNER_TEMP/ipapatch-src"
+          go build -o "$RUNNER_TEMP/ipapatch" .
+
+      - name: Patch app and widget extension
+        run: |
+          "$RUNNER_TEMP/ipapatch" \
+            --input MinRejsetider-before-ipapatch.ipa \
+            --output MinRejsetider-ipapatch-unsigned.ipa \
+            --noconfirm
+
+      - name: Validate patched IPA
+        run: |
+          mkdir patched
+          ditto -x -k MinRejsetider-ipapatch-unsigned.ipa patched
+          APP=$(find patched/Payload -maxdepth 1 -name "*.app" | head -n 1)
+          APPEX="$APP/PlugIns/RejsetiderWidgetExtension.appex"
+          test -f "$APP/Frameworks/zxPluginsInject.dylib"
+          otool -L "$APP/MinRejsetider" | grep -F "@rpath/zxPluginsInject.dylib"
+          otool -L "$APPEX/RejsetiderWidgetExtension" | grep -F "@rpath/zxPluginsInject.dylib"
+          otool -l "$APPEX/RejsetiderWidgetExtension" | grep -F "@executable_path/../../Frameworks"
+          lipo -info "$APP/MinRejsetider"
+          lipo -info "$APPEX/RejsetiderWidgetExtension"
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: MinRejsetider-ipapatch-unsigned
+          path: MinRejsetider-ipapatch-unsigned.ipa
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ipapatch-${{ github.run_number }}
+          name: ipapatch widget TEST (build ${{ github.run_number }})
+          body: |
+            App + widget patched med ipapatch v2.1.3.
+            Runtime-fixet er injiceret i både hovedappen og widget-extensionen.
+            Testvariant til RustSign/eSign; skal stadig signeres efter patching.
+            Commit: ${{ github.sha }}
+          files: MinRejsetider-ipapatch-unsigned.ipa
+          prerelease: true

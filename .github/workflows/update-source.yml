@@ -8,6 +8,7 @@ on:
       - "Build free-signing IPA (app+widget, no App Groups)"
       - "Build eSign IPA (app-only, no widget/groups)"
       - "Build unsigned IPA (no Mac needed)"
+      - "Build ipapatch widget IPA"
     types: [completed]
   workflow_dispatch:
 
