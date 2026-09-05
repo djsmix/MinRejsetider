@@ -24,6 +24,11 @@ jobs:
       - name: Install xcodegen
         run: brew install xcodegen || true
 
+      - name: Set up Go 1.24.3
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.24.3"
+
       - name: Generate project
         run: xcodegen generate
 
