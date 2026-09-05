@@ -6,6 +6,22 @@
   "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png",
   "apps": [
     {
+      "name": "MinRejsetider ipapatch-TEST",
+      "bundleIdentifier": "dk.minrejsetider.MinRejsetider",
+      "developerName": "privat",
+      "subtitle": "App + widget med App Group runtime-fix",
+      "version": "1.0-ipapatch-2",
+      "versionDate": "2026-09-05T19:13:28Z",
+      "versionDescription": "TEST: App + widget patched med ipapatch v2.1.3. Kan stadig fejle, hvis widget-extensionen ikke får en gyldig provisioning profile.",
+      "downloadURL": "https://github.com/djsmix/MinRejsetider/releases/download/ipapatch-2/MinRejsetider-ipapatch-unsigned.ipa",
+      "localizedDescription": "Eksperimentel testvariant patched med ipapatch v2.1.3. Fixet forsøger at bruge en App Group fra dit certifikat i både app og widget. Signér IPA'en i RustSign/eSign efter patching.",
+      "iconURL": "https://djsmix.github.io/MinRejsetider/icon.png",
+      "tintColor": "DC262E",
+      "size": 326499,
+      "screenshotURLs": [],
+      "beta": false
+    },
+    {
       "name": "MinRejsetider + widget",
       "bundleIdentifier": "dk.minrejsetider.MinRejsetider",
       "developerName": "privat",
