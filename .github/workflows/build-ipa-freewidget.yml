@@ -1,4 +1,4 @@
-name: Build free-signing IPA (app+widget, no App Groups)
+name: Build Live Activity IPA (no App Groups)
 
 on:
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
           brew install xcodegen || true
           python3 -m pip install --break-system-packages pyyaml || pip3 install --break-system-packages pyyaml || python3 -m pip install pyyaml
 
-      - name: Strip App Groups only (keep widget)
+      - name: Strip App Groups only (keep ActivityKit extension)
         run: python3 .github/workflows/strip_groups_only.py
 
       - name: Generate project
@@ -36,7 +36,7 @@ jobs:
       - name: Validate IPA structure
         run: echo "(valideres efter build)"
 
-      - name: Build .app (unsigned, app+widget)
+      - name: Build .app (unsigned, app+Live Activity)
         run: |
           xcodebuild \
             -project MinRejsetider.xcodeproj \
@@ -81,12 +81,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: freewidget-${{ github.run_number }}
-          name: App+widget til gratis certs (build ${{ github.run_number }})
+          name: Live Activity TEST (build ${{ github.run_number }})
           body: |
-            App + widget UDEN App Groups — til eSign/Sideloadly/SideStore med gratis cert.
+            App + Live Activity UDEN App Groups — test til RustSign/eSign.
             Hent .ipa'en direkte herunder (ingen udpakning nødvendig).
-            OBS: app og widget deler ikke indstillinger her — widgetten viser
-            standardstationerne. Sig til, så bager jeg dine stationer ind.
+            Start Live Activity fra appens forside. Ingen almindelig widget.
+            Nye realtime-data overføres, mens appen er åben.
             Commit: ${{ github.sha }}
           files: MinRejsetider-freewidget-unsigned.ipa
           prerelease: true

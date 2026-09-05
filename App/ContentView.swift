@@ -3,6 +3,7 @@ import WidgetKit
 
 @MainActor
 final class BoardViewModel: ObservableObject {
+    let liveActivity = LiveActivityController()
     @Published var settings = SharedStore.loadSettings()
     @Published var departures: [Departure] = SharedStore.loadCache()?.departures ?? []
     @Published var lastFetch: Date? = SharedStore.lastFetch()
@@ -51,6 +52,7 @@ final class BoardViewModel: ObservableObject {
             SharedStore.saveCache(deps, at: now)
             budgetCount = BudgetStore.shared.currentCount()
             WidgetCenter.shared.reloadAllTimelines()
+            await liveActivity.update(settings: settings, departures: deps, updatedAt: now)
             if !bad.isEmpty {
                 errorMessage = "Kunne ikke bruge: \(bad.joined(separator: ", ")). Vælg stationen igen under Opsætning."
             }
@@ -126,6 +128,23 @@ private struct DeparturesScreen: View {
                     }
                 }
 
+                Section {
+                    LiveActivityCard(
+                        controller: viewModel.liveActivity,
+                        stationName: viewModel.settings.stations.first?.shortName,
+                        canStart: !viewModel.settings.stations.isEmpty && !viewModel.settings.accessId.isEmpty,
+                        loading: viewModel.isLoading,
+                        start: {
+                            Task { await startLiveActivity() }
+                        },
+                        stop: {
+                            Task { await viewModel.liveActivity.stop() }
+                        }
+                    )
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .listRowBackground(Color.clear)
+                }
+
                 if viewModel.settings.stations.isEmpty {
                     Section {
                         VStack(spacing: 14) {
@@ -182,6 +201,7 @@ private struct DeparturesScreen: View {
             .refreshable { await viewModel.refresh(force: false) }
             .task { await viewModel.refresh(force: false) }
             .onAppear {
+                viewModel.liveActivity.refreshStatus()
                 timer?.invalidate()
                 timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
                     Task { await viewModel.refresh(force: false) }
@@ -196,6 +216,77 @@ private struct DeparturesScreen: View {
 
     private func filtered(_ station: Station) -> [Departure] {
         RejseplanenAPI.applyFilter(viewModel.departures, for: station)
+    }
+
+    private func startLiveActivity() async {
+        if viewModel.departures.isEmpty {
+            await viewModel.refresh(force: true)
+        }
+        await viewModel.liveActivity.start(
+            settings: viewModel.settings,
+            departures: viewModel.departures,
+            updatedAt: viewModel.lastFetch ?? Date()
+        )
+    }
+}
+
+private struct LiveActivityCard: View {
+    @ObservedObject var controller: LiveActivityController
+    let stationName: String?
+    let canStart: Bool
+    let loading: Bool
+    var start: () -> Void
+    var stop: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                Image(systemName: "rectangle.inset.filled.and.person.filled")
+                    .font(.title2)
+                    .foregroundStyle(.blue)
+                    .frame(width: 42, height: 42)
+                    .background(Color.blue.opacity(0.14), in: RoundedRectangle(cornerRadius: 12))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Afgange på låseskærmen")
+                        .font(.headline)
+                    Text(controller.statusText)
+                        .font(.caption)
+                        .foregroundStyle(controller.isActive ? .green : .secondary)
+                }
+                Spacer()
+            }
+
+            if let stationName {
+                Label(stationName, systemImage: "m.circle.fill")
+                    .font(.subheadline.weight(.semibold))
+            }
+
+            Text("Sekundnedtællingen fortsætter på låseskærmen. Nye forsinkelser overføres, mens appen er åben og henter data.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Button(action: controller.isActive ? stop : start) {
+                Label(
+                    controller.isActive ? "Stop Live Activity" : "Start Live Activity",
+                    systemImage: controller.isActive ? "stop.circle.fill" : "play.circle.fill"
+                )
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .tint(controller.isActive ? .red : .blue)
+            .disabled((!canStart || loading) && !controller.isActive)
+        }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(Color.blue.opacity(0.09))
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(Color.blue.opacity(0.15), lineWidth: 1)
+        }
     }
 }
 

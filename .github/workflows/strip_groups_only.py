@@ -1,11 +1,8 @@
-"""Variant C: behold widget-extension, men fjern App Groups entitlements.
+"""Variant C: behold ActivityKit/widget-extension, men fjern App Groups entitlements.
 Bruges til gratis certs (eSign/Sideloadly/SideStore), hvor custom App Groups
 ikke er dækket af provisioning-profilen.
 
-Konsekvens: app og widget deler IKKE indstillinger (hver bruger sine egne
-defaults). Widgetten kører standalone på de indbyggede defaults (accessId +
-standardstationer). Vil du have widgetten til at vise DINE stationer, så bed
-om at få dem bagt ind som defaults i Models.swift.
+Live Activity-data sendes gennem ActivityKit og kræver derfor ikke App Groups.
 
 Brug: python3 .github/workflows/strip_groups_only.py
 """

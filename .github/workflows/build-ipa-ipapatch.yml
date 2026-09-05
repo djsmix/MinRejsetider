@@ -2,13 +2,6 @@ name: Build ipapatch widget IPA
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - "App/**"
-      - "Shared/**"
-      - "Widget/**"
-      - "project.yml"
-      - ".github/workflows/build-ipa-ipapatch.yml"
 
 jobs:
   build:

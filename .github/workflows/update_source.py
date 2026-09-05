@@ -1,5 +1,5 @@
 """Opdaterer docs/apps.json (AltStore-format) og docs/esign.json (eSign-format)
-med nyeste freewidget-*, esign-* og ipapatch-* releases. Kører i update-source workflow
+med nyeste Live Activity- og app-only-builds. Kører i update-source workflow
 ved hvert nyt release. Kræver `gh` CLI (findes på runneren).
 """
 import json
@@ -42,13 +42,9 @@ def asset(tag: str) -> dict:
 def build() -> tuple[dict, dict]:
     fw_tag = latest_tag("freewidget")
     es_tag = latest_tag("esign")
-    wt_tag = latest_tag("widgettest")
-    ip_tag = latest_tag("ipapatch")
     if not fw_tag or not es_tag:
         raise SystemExit(f"Mangler tags (freewidget={fw_tag}, esign={es_tag}) — springer over.")
     fw, es = asset(fw_tag), asset(es_tag)
-    wt = asset(wt_tag) if wt_tag else None
-    ip = asset(ip_tag) if ip_tag else None
 
     def app_block(kind: str, a: dict, name: str, subtitle: str, desc: str, vdesc: str) -> dict:
         return {
@@ -69,30 +65,15 @@ def build() -> tuple[dict, dict]:
         }
 
     apps = [
-        app_block("freewidget", fw, "MinRejsetider + widget",
-                  "App + konfigurerbar widget til gratis certs",
-                  "Personlig metro-afgangstavle med konfigurerbar widget (vælg station, retning og tidsrum direkte på widgetten). Henter kun i dine tidsvinduer og holder sig langt under 50.000 API-kald/md. Usigneret — signér selv i eSign/Sideloadly. OBS: app og widget deler ikke indstillinger (ingen App Groups på gratis certs).",
-                  "App + widget uden App Groups. Konfigurerbar widget, live-nedtælling, retningsvælger."),
+        app_block("freewidget", fw, "MinRejsetider Live Activity TEST",
+                  "Afgange på låseskærmen og Dynamic Island",
+                  "Testversion med en Live Activity uden App Groups eller push. Start den fra appens forside. Sekundnedtællingen fortsætter på låseskærmen; nye realtime-data overføres, mens appen er åben.",
+                  "TEST: Live Activity med afgangstavle og sekundnedtælling. Ingen almindelig widget og ingen App Groups."),
         app_block("esign", es, "MinRejsetider basis",
                   "Kun appen, uden widget",
                   "Kun selve appen, uden widget. Mindste flade der kan drille ved signering — vælg denne hvis +widget-varianten ikke vil installere. Usigneret — signér selv i eSign/Sideloadly.",
                   "Samme app som +widget-varianten, men uden widget-extension."),
     ]
-    if ip is not None:
-        apps.insert(
-            0,
-            app_block("ipapatch", ip, "MinRejsetider ipapatch-TEST",
-                      "App + widget med App Group runtime-fix",
-                      "Eksperimentel testvariant patched med ipapatch v2.1.3. Fixet forsøger at bruge en App Group fra dit certifikat i både app og widget. Signér IPA'en i RustSign/eSign efter patching.",
-                      "TEST: App + widget patched med ipapatch v2.1.3. Kan stadig fejle, hvis widget-extensionen ikke får en gyldig provisioning profile.")
-        )
-    if wt is not None:
-        apps.append(
-            app_block("widgettest", wt, "MinRejsetider widget-TEST",
-                      "KUN test — statisk widget uden intents",
-                      "TEST-build til at isolere eSign-installationsfejl. Viser blot 'Test'. IKKE til daglig brug.",
-                      "Statisk widget uden App Intents.")
-        )
     apps_json = {
         "name": "MinRejsetider",
         "identifier": "dk.minrejsetider.source",

@@ -19,6 +19,7 @@ targets:
     info:
       path: App/Info.plist
       properties:
+        NSSupportsLiveActivities: true
         UILaunchScreen: {}
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
